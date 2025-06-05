@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hotel Booking Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f0f0f0;
+    }
+
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #444;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #eef;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      background-color: #0077b6;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005f8e;
+    }
+  </style>
+</head>
+<body>
+  <form id="bookingForm">
+    <h2>Hotel Booking</h2>
+
+    <label>Name*</label>
+    <input type="text" id="name" required>
+
+    <label>Check-in Date*</label>
+    <input type="date" id="checkin" required>
+
+    <label>Total Days*</label>
+    <input type="number" id="days" min="1" required>
+
+    <label>Total Persons*</label>
+    <input type="number" id="persons" min="1" required>
+
+    <label>Advance Amount*</label>
+    <input type="number" id="advance" min="0" required>
+
+    <label>Room Type*</label>
+    <select id="roomType" required>
+      <option value="">Select</option>
+      <option value="deluxe">Deluxe</option>
+      <option value="suite">Suite</option>
+    </select>
+
+    <label>Amenities</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="ac"> AC</label>
+      <label><input type="checkbox" id="locker"> Locker</label>
+    </div>
+
+    <button type="button" onclick="calculate()">Calculate</button>
+
+    <div class="result" id="result" style="display:none;"></div>
+  </form>
+
+  <script>
+    function calculate() {
+      const name = document.getElementById("name").value.trim();
+      const checkin = document.getElementById("checkin").value;
+      const days = parseInt(document.getElementById("days").value);
+      const persons = parseInt(document.getElementById("persons").value);
+      const advance = parseFloat(document.getElementById("advance").value);
+      const roomType = document.getElementById("roomType").value;
+      const ac = document.getElementById("ac").checked;
+      const locker = document.getElementById("locker").checked;
+
+      if (!name || !checkin || !days || !persons || isNaN(advance) || !roomType) {
+        alert("Please fill all mandatory fields!");
+        return;
+      }
+
+      const roomRates = { deluxe: 2500, suite: 4000 };
+      const amenityRates = { ac: 1000, locker: 300 };
+
+      let roomCost = roomRates[roomType] * days;
+
+      let amenityCost = 0;
+      if (ac) amenityCost += amenityRates.ac * days;
+      if (locker) amenityCost += amenityRates.locker * days;
+
+      let extraPersonCharge = 0;
+      if (persons > 2) {
+        extraPersonCharge = (persons - 2) * 1000 * days;
+      }
+
+      const totalCost = roomCost + amenityCost + extraPersonCharge;
+      const balance = totalCost - advance;
+
+      const result = document.getElementById("result");
+      result.style.display = "block";
+      result.innerHTML = `
+        <strong>Total Room Cost:</strong> ₹${roomCost}<br>
+        <strong>Amenities Cost:</strong> ₹${amenityCost}<br>
+        <strong>Extra Person Charges:</strong> ₹${extraPersonCharge}<br>
+        <strong>Total Cost:</strong> ₹${totalCost}<br>
+        <strong>Advance Paid:</strong> ₹${advance}<br>
+        <strong>Balance to Pay:</strong> ₹${balance}
+      `;
+    }
+  </script>
+</body>
+</html>
